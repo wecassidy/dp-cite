@@ -38,7 +38,7 @@ def by_direct(node):
     return node.individual_weight()
 
 
-def by_number(node):
+def by_section(node):
     return node.cite
 
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         help="Sort by cumulative citations (citations of a section and all its subsections)",
     )
     sorters.add_argument(
-        "-n", "--number", action="store_true", help="Sort by section number"
+        "-s", "--section", action="store_true", help="Sort by section number"
     )
     args = parser.parse_args()
 
@@ -71,8 +71,8 @@ if __name__ == "__main__":
         sorter = by_direct
     elif args.cumulative:
         sorter = by_cumulative
-    elif args.number:
-        sorter = by_number
+    elif args.section:
+        sorter = by_section
     else:
         raise RuntimeError("Unknown sorter")
 
