@@ -4,46 +4,54 @@
 Citation tree data structure.
 """
 
-from collections import namedtuple
 
-Node = namedtuple("Node", ("label", "weight", "children"))
+class Node:
+    """Citation tree with cumulative weights."""
 
+    def __init__(self, label):
+        self.label = label
+        self.weight = 1
+        self.children = []
 
-def cumulative_weight(node):
-    """
-    Find the cumulative weight of a node: sum of the node and its
-    children's cumulative weights.
-    """
-    if len(node.children) == 0:
-        return node.weight
+    def add_cite(self, cite):
+        """Add a citation to a node, adjusting weights as necessary"""
+        if len(cite) == 0:
+            return
 
-    return node.weight + sum(map(cumulative_weight, node.children))
+        section = cite[0]
+        subsections = cite[1:]
+        for child in self.children:
+            if child.label == section:
+                child.weight += 1
+                child.add_cite(subsections)
+                break
+        else:
+            new_child = Node(section)
+            self.children.append(new_child)
+            new_child.add_cite(subsections)
 
+    def individual_weight(self):
+        """
+        Find number of direct citations of a node. This is the weight
+        of a node minus the weight of its children.
+        """
+        return self.weight - sum(c.weight for c in self.children)
 
-def add_cite(node, cite):
-    """Add a citation of a node, adjusting weights as necessary"""
-    if len(cite) == 0:
-        return
-
-    section = cite[0]
-    subsections = cite[1:]
-    for child in node.children:
-        if child.label == section:
-            child.weight += 1
-            add_cite(child, subsections)
-            break
-    else:
-        new_child = Node(section, 1, [])
-        node.children.append(new_child)
-        add_cite(new_child, subsections)
-
-
-def print_tree(node, level=0):
-    """Pretty-print a tree"""
-    print(
-        "{indent}{label}: {weight}".format(
-            indent="  " * level, label=node.label, weight=node.weight
+    def __str__(self, level=0):
+        """Pretty-print a tree"""
+        out = "{indent}{label}: {weight}".format(
+            indent="  " * level, label=self.label, weight=self.weight
         )
-    )
-    for child in node.children:
-        print_tree(child, level + 1)
+        for child in self.children:
+            out += "\n" + child.__str__(level + 1)
+
+        return out
+
+
+def test():
+    dp = Node("Du Plessis")
+    dp.add_cite(["8"])
+    dp.add_cite(["7", "3", "2", "ii"])
+    dp.add_cite(["7", "3", "3"])
+    dp.add_cite(["7", "3", "3"])
+    return dp
