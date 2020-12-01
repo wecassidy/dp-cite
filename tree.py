@@ -47,6 +47,12 @@ class Node:
 
         return out
 
+    def flatten(self, key):
+        lst = [self]
+        for child in self.children:
+            lst.extend(child.flatten(key))
+        return sorted(lst, key=key)
+
 
 def test():
     dp = Node("Du Plessis")
