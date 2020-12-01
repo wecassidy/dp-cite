@@ -8,8 +8,9 @@ Citation tree data structure.
 class Node:
     """Citation tree with cumulative weights."""
 
-    def __init__(self, label):
+    def __init__(self, label, cite):
         self.label = label
+        self.cite = cite
         self.weight = 1
         self.children = []
 
@@ -26,7 +27,7 @@ class Node:
                 child.add_cite(subsections)
                 break
         else:
-            new_child = Node(rebuild_cite(self.label, section))
+            new_child = Node(section, rebuild_cite(self.cite, section))
             self.children.append(new_child)
             new_child.add_cite(subsections)
 
@@ -40,7 +41,7 @@ class Node:
     def __str__(self, level=0):
         """Pretty-print a tree"""
         out = "{indent}{label}: {weight}".format(
-            indent="  " * level, label=self.label, weight=self.weight
+            indent="  " * level, label=self.cite, weight=self.weight
         )
         for child in self.children:
             out += "\n" + child.__str__(level + 1)
@@ -63,8 +64,16 @@ def rebuild_cite(supersection, subsection):
         return supersection + "(" + subsection + ")"
 
 
+def by_cumulative(node):
+    return node.weight
+
+
+def by_direct(node):
+    return node.individual_weight()
+
+
 def test():
-    dp = Node("")
+    dp = Node("", "")
     dp.add_cite(["8"])
     dp.add_cite(["7", "3", "2", "ii"])
     dp.add_cite(["7", "3", "3"])
