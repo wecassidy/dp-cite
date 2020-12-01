@@ -26,7 +26,7 @@ class Node:
                 child.add_cite(subsections)
                 break
         else:
-            new_child = Node(section)
+            new_child = Node(rebuild_cite(self.label, section))
             self.children.append(new_child)
             new_child.add_cite(subsections)
 
@@ -54,8 +54,17 @@ class Node:
         return sorted(lst, key=key)
 
 
+def rebuild_cite(supersection, subsection):
+    if supersection == "":
+        return subsection
+    elif subsection.isnumeric():
+        return supersection + "." + subsection
+    else:
+        return supersection + "(" + subsection + ")"
+
+
 def test():
-    dp = Node("Du Plessis")
+    dp = Node("")
     dp.add_cite(["8"])
     dp.add_cite(["7", "3", "2", "ii"])
     dp.add_cite(["7", "3", "3"])
