@@ -72,6 +72,10 @@ def by_direct(node):
     return node.individual_weight()
 
 
+def by_number(node):
+    return node.cite
+
+
 def test():
     dp = Node("", "")
     dp.add_cite(["8"])

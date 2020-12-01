@@ -33,6 +33,19 @@ def citation_sections(cite):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("docs", nargs="+", help="List of documents to scrape")
+    sorters = parser.add_mutually_exclusive_group(required=True)
+    sorters.add_argument(
+        "-d", "--direct", action="store_true", help="Sort by direct citations"
+    )
+    sorters.add_argument(
+        "-c",
+        "--cumulative",
+        action="store_true",
+        help="Sort by cumulative citations (citations of a section and all its subsections)",
+    )
+    sorters.add_argument(
+        "-n", "--number", action="store_true", help="Sort by section number"
+    )
     args = parser.parse_args()
 
     dp = tree.Node("", "")
@@ -42,6 +55,17 @@ if __name__ == "__main__":
         for c in citations:
             dp.add_cite(c)
 
-    print("Section\t\tDirect\tCumulative")
-    for sec in reversed(dp.flatten(tree.by_cumulative)):
-        print("{}\t\t{}\t{}".format(sec.cite, sec.individual_weight(), sec.weight))
+    if args.direct:
+        sorter = tree.by_direct
+    elif args.cumulative:
+        sorter = tree.by_cumulative
+    elif args.number:
+        sorter = tree.by_number
+    else:
+        raise RuntimeError("Unknown sorter")
+
+    dp.cite = "Du Plessis"
+    row_fmt = "{:<15} {:>10} {:>10}"
+    print(row_fmt.format("Section", "Direct", "Cumulative"))
+    for sec in reversed(dp.flatten(sorter)):
+        print(row_fmt.format(sec.cite, sec.individual_weight(), sec.weight))
