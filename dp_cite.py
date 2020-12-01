@@ -30,6 +30,18 @@ def citation_sections(cite):
     return re.findall(SUBSECTION_RE, cite)
 
 
+def by_cumulative(node):
+    return node.weight
+
+
+def by_direct(node):
+    return node.individual_weight()
+
+
+def by_number(node):
+    return node.cite
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("docs", nargs="+", help="List of documents to scrape")
@@ -56,11 +68,11 @@ if __name__ == "__main__":
             dp.add_cite(c)
 
     if args.direct:
-        sorter = tree.by_direct
+        sorter = by_direct
     elif args.cumulative:
-        sorter = tree.by_cumulative
+        sorter = by_cumulative
     elif args.number:
-        sorter = tree.by_number
+        sorter = by_number
     else:
         raise RuntimeError("Unknown sorter")
 

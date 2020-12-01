@@ -64,18 +64,6 @@ def rebuild_cite(supersection, subsection):
         return supersection + "(" + subsection + ")"
 
 
-def by_cumulative(node):
-    return node.weight
-
-
-def by_direct(node):
-    return node.individual_weight()
-
-
-def by_number(node):
-    return node.cite
-
-
 def test():
     dp = Node("", "")
     dp.add_cite(["8"])
