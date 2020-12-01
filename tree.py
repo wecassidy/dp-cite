@@ -11,11 +11,12 @@ class Node:
     def __init__(self, label, cite):
         self.label = label
         self.cite = cite
-        self.weight = 1
+        self.weight = 0
         self.children = []
 
     def add_cite(self, cite):
         """Add a citation to a node, adjusting weights as necessary"""
+        self.weight += 1
         if len(cite) == 0:
             return
 
@@ -23,7 +24,6 @@ class Node:
         subsections = cite[1:]
         for child in self.children:
             if child.label == section:
-                child.weight += 1
                 child.add_cite(subsections)
                 break
         else:
